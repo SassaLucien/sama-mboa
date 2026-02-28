@@ -26,10 +26,20 @@
         <p style="color:#666;">Répertoire de l'élite technique du 237</p>
     </div>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Chercher une ville ou une compétence (ex: Douala, Java...)">
-        <button class="btn-search" onclick="searchTalents()"><i class="fas fa-search"></i></button>
+   <div class="search-container" style="max-width: 800px; margin: 0 auto 40px; text-align: center;">
+    <div class="search-box" style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <input type="text" id="searchInput" placeholder="Chercher un talent ou une spécialité..." style="flex: 1; background: #111; border: 1px solid #333; padding: 12px; color: #fff; border-radius: 8px;">
+        <button class="btn-search" onclick="searchTalents()" style="background: #D4AF37; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;"><i class="fas fa-search"></i></button>
     </div>
+
+    <div class="quick-filters" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <button onclick="filterByCity('')" style="background: #222; color: #fff; border: 1px solid #444; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Tous</button>
+        <button onclick="filterByCity('Douala')" style="background: #111; color: #00FF41; border: 1px solid #00FF41; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Douala</button>
+        <button onclick="filterByCity('Yaoundé')" style="background: #111; color: #00FF41; border: 1px solid #00FF41; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Yaoundé</button>
+        <button onclick="filterByCity('Bafoussam')" style="background: #111; color: #00FF41; border: 1px solid #00FF41; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Bafoussam</button>
+        <button onclick="filterByCity('Garoua')" style="background: #111; color: #00FF41; border: 1px solid #00FF41; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Garoua</button>
+    </div>
+</div>
 
     <div id="talentsDisplay" class="talents-grid">
         </div>

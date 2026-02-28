@@ -43,24 +43,24 @@ memberForm.addEventListener('submit', function(e) {
 
     const nom = document.getElementById('nom').value;
     const secteur = document.getElementById('secteur').value;
+    const ville = document.getElementById('ville').value; // <-- NOUVEAU : On récupère la ville
     const motivation = document.getElementById('motivation').value;
     
-    // Numéro de l'administrateur
     const adminNumber = "237695919164";
 
-    // Construction du message WhatsApp
+    // Construction du message WhatsApp AVEC LA VILLE
     const message = `Bonjour Admin SAMA_MBOA,%0A%0A` +
                     `*NOUVELLE DEMANDE DE MEMBRE*%0A` +
                     `----------------------------%0A` +
                     `*Nom:* ${nom}%0A` +
+                    `*Ville:* ${ville}%0A` + // <-- Ajouté ici
                     `*Secteur:* ${secteur}%0A` +
                     `*Motivation:* ${motivation}%0A` +
                     `----------------------------%0A` +
-                    `L'utilisateur a joint sa photo de profil. Merci de valider son accès.`;
+                    `L'utilisateur a joint sa photo de profil.`;
 
-    // Redirection vers WhatsApp
     const whatsappUrl = `https://wa.me/${adminNumber}?text=${message}`;
     
-    alert("Votre demande est prête. Vous allez être redirigé vers WhatsApp pour envoyer votre dossier et votre photo à l'administrateur.");
+    alert("Candidature prête ! Redirection vers l'Admin pour la photo.");
     window.open(whatsappUrl, '_blank');
 });
