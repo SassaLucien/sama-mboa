@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMA_MBOA | Enrôlement Bâtisseur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --gold: #D4AF37; --emerald: #00FF41; --bg: #050608; }
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+            background-image: radial-gradient(circle at center, #004d2c22, transparent);
+        }
+        .form-card { 
+            background: rgba(255,255,255,0.02); padding: 40px; border-radius: 20px; 
+            border: 1px solid rgba(212,175,55,0.2); width: 100%; max-width: 400px; 
+            backdrop-filter: blur(10px); text-align: center;
+        }
+        h2 { font-family: 'Cinzel'; color: var(--gold); margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
+        
+        input { 
+            width: 100%; padding: 15px; margin-bottom: 20px; background: #000; 
+            border: 1px solid #222; color: #fff; border-radius: 8px; outline: none; font-family: inherit;
+        }
+        input:focus { border-color: var(--emerald); }
+
+        .btn-join { 
+            background: var(--gold); color: #000; border: none; padding: 18px; 
+            width: 100%; font-weight: 800; cursor: pointer; border-radius: 8px; 
+            text-transform: uppercase; transition: 0.3s;
+        }
+        .btn-join:hover { background: #fff; box-shadow: 0 0 20px var(--gold); }
+        .back-link { display: block; margin-top: 20px; color: #444; text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="form-card">
+        <h2>ENRÔLEMENT</h2>
+        <p class="subtitle">Enregistrez votre Alias opérationnel</p>
+        
+        <form id="enrollForm">
+            <input type="text" id="mNom" placeholder="Alias / Identifiant SAMA" required>
+            <input type="text" id="mRole" placeholder="Domaine d'Intervention (ex: Cyber-Audit)" required>
+            
+            <button type="submit" id="submitBtn" class="btn-join">Soumettre au Conseil</button>
+        </form>
+
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour au portail</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // COPIE TES INFOS FIREBASE ICI
+       const firebaseConfig = {
+  apiKey: "AIzaSyBfpzKXEXtKOCoM3pYE-gHYdRv3u1B47fE",
+  authDomain: "samamboa-5d546.firebaseapp.com",
+  projectId: "samamboa-5d546",
+  storageBucket: "samamboa-5d546.firebasestorage.app",
+  messagingSenderId: "23677970163",
+  appId: "1:23677970163:web:b99dc030affaf4c2eef986",
+  measurementId: "G-REKW3LDFW7"
+};
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('enrollForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+
+            try {
+                // On enregistre SANS le champ photo
+                await addDoc(collection(db, "membres"), {
+                    nom: document.getElementById('mNom').value,
+                    role: document.getElementById('mRole').value,
+                    status: "en_attente",
+                    date: new Date()
+                });
+
+                alert("Alias enregistré dans le système. En attente de validation Root.");
+                window.location.href = "index.html";
+            } catch (err) {
+                alert("Erreur de transmission.");
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

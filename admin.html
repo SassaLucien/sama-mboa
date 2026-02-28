@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>SAMA_MBOA | Root System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #D4AF37; --emerald: #00FF41; --bg: #050608; }
+        body { background: var(--bg); color: #fff; font-family: 'Fira Code', monospace; padding: 40px; display:none; } /* Masqué par défaut */
+        .grid-admin { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .panel { border: 1px solid #222; padding: 25px; background: rgba(255,255,255,0.02); border-radius: 15px; }
+        h2 { color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; background: #000; border: 1px solid #333; color: var(--emerald); padding: 12px; margin-bottom: 15px; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: var(--gold); color: #000; font-weight: 900; border: none; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        button:hover { background: #fff; }
+        .card-item { background: #111; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+        .btn-red { background: #ff4444; color: white; padding: 5px 10px; cursor: pointer; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body id="adminBody">
+
+    <h1 style="text-align: center; color: var(--gold); margin-bottom: 50px;">SAMA_MBOA // CONSOLE_DE_CONTRÔLE</h1>
+
+    <div class="grid-admin">
+        
+        <div class="panel">
+            <h2>_ENREGISTRER_BÂTISSEUR</h2>
+            <input type="text" id="mNom" placeholder="Nom complet">
+            <input type="text" id="mRole" placeholder="Rôle (ex: Ingénieur Sécurité)">
+            <input type="text" id="mPhoto" placeholder="Nom du fichier image (ex: lucien.jpg)">
+            <p style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">* L'image doit être dans le dossier /images/</p>
+            <button onclick="addMember()">INTÉGRER AU CONSEIL</button>
+
+            <h2 style="margin-top:40px;">_MEMBRES_ACTIFS</h2>
+            <div id="membersList"></div>
+        </div>
+
+        <div class="panel">
+            <h2>_NOUVEL_EXECUTABLE_PROJET</h2>
+            <input type="text" id="pNom" placeholder="Nom du projet">
+            <textarea id="pDesc" placeholder="Détails techniques..."></textarea>
+            <input type="number" id="pProg" placeholder="Avancement %" max="100">
+            <button onclick="addProject()">DÉPLOYER_PROJET</button>
+            
+            <h2 style="margin-top:40px;">_DIRECTIVE_SYSTEME (POST)</h2>
+            <input type="text" id="aTitre" placeholder="Titre du post">
+            <textarea id="aContenu" placeholder="Contenu du post..."></textarea>
+            <button onclick="addAlert()" style="background: var(--emerald);">PUBLIER_DIRECTIVE</button>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // VERIFICATION DE SECURITÉ IMMÉDIATE
+        const pass = prompt("SAMA_MBOA : Entrez la clé de sécurité");
+        if(pass === "SAMA2026") { // Ta clé ici
+            document.getElementById('adminBody').style.display = "block";
+        } else {
+            alert("ACCÈS RÉVOQUÉ");
+            window.location.href = "index.html";
+        }
+
+           const firebaseConfig = {
+  apiKey: "AIzaSyBfpzKXEXtKOCoM3pYE-gHYdRv3u1B47fE",
+  authDomain: "samamboa-5d546.firebaseapp.com",
+  projectId: "samamboa-5d546",
+  storageBucket: "samamboa-5d546.firebasestorage.app",
+  messagingSenderId: "23677970163",
+  appId: "1:23677970163:web:b99dc030affaf4c2eef986",
+  measurementId: "G-REKW3LDFW7"
+};
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- AJOUTER UN MEMBRE ---
+        window.addMember = async () => {
+            const nom = document.getElementById('mNom').value;
+            const role = document.getElementById('mRole').value;
+            const photo = document.getElementById('mPhoto').value;
+            if(!nom || !role) return alert("Champs vides !");
+            await addDoc(collection(db, "membres"), { nom, role, photo, status: "valide", date: new Date() });
+            alert("BÂTISSEUR ENREGISTRÉ");
+        };
+
+        // --- AJOUTER UN PROJET ---
+        window.addProject = async () => {
+            const nom = document.getElementById('pNom').value;
+            const desc = document.getElementById('pDesc').value;
+            const prog = document.getElementById('pProg').value;
+            await addDoc(collection(db, "projets"), { nom, description: desc, progression: parseInt(prog), date: new Date() });
+            alert("PROJET DÉPLOYÉ");
+        };
+
+        // --- AJOUTER UNE ALERTE (POST) ---
+        window.addAlert = async () => {
+            const titre = document.getElementById('aTitre').value;
+            const contenu = document.getElementById('aContenu').value;
+            await addDoc(collection(db, "posts"), { titre, contenu, date: new Date() });
+            alert("DIRECTIVE PUBLIÉE");
+        };
+
+        // --- LISTER LES MEMBRES POUR SUPPRESSION ---
+        onSnapshot(collection(db, "membres"), (snap) => {
+            const wrap = document.getElementById('membersList');
+            wrap.innerHTML = "";
+            snap.forEach(d => {
+                wrap.innerHTML += `<div class="card-item">
+                    <span>${d.data().nom}</span>
+                    <button class="btn-red" onclick="deleteItem('membres', '${d.id}')">X</button>
+                </div>`;
+            });
+        });
+
+        window.deleteItem = async (col, id) => {
+            if(confirm("Confirmer la suppression ?")) await deleteDoc(doc(db, col, id));
+        };
+    </script>
+</body>
+</html>
